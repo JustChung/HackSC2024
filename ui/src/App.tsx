@@ -1,13 +1,22 @@
 import './App.css';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { List, TextField, Box, Container, Typography, Button } from '@mui/material';
 import ListItemComponent from './ListItemComponent';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [flags, setFlags] = useState([{ label: 'Flag 1:', timestamp: '---' }]);
+  const [allFlags, setAllFlags] = useState([]);
+  const [displayedFlags, setDisplayedFlags] = useState([{ label: 'Flag 1:', timestamp: '---' }]);
   const [flagCount, setFlagCount] = useState(1);
   const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (allFlags.length === 0) {
+      setDisplayedFlags([{ label: 'Flag 1:', timestamp: '---' }]);
+    } else {
+      setDisplayedFlags(allFlags.slice(0, 3));
+    }
+  }, [allFlags]);
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
@@ -17,9 +26,10 @@ function App() {
     if (videoRef.current) {
       const elapsedTime = videoRef.current.currentTime.toFixed(2);
 
-      if (flags.length === 1 && flags[0].timestamp === '---') {
-        const updatedFlag = { ...flags[0], timestamp: elapsedTime };
-        setFlags([updatedFlag]);
+      if (allFlags.length === 0 || allFlags[0].timestamp === '---') {
+        const newFlag = { label: 'Flag 1:', timestamp: elapsedTime };
+        setAllFlags([newFlag]);
+        setFlagCount(1);
       } else {
         const newFlagCount = flagCount + 1;
 
@@ -28,10 +38,24 @@ function App() {
           timestamp: elapsedTime,
         };
 
-        const updatedFlags = [newFlag, ...flags].slice(0, 3);
-        setFlags(updatedFlags);
+        const updatedAllFlags = [newFlag, ...allFlags];
+        setAllFlags(updatedAllFlags);
         setFlagCount(newFlagCount);
       }
+    }
+  };
+
+  const handleFlagClick = (index) => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = parseFloat(allFlags[index].timestamp);
+      videoRef.current.play();
+
+      const updatedAllFlags = allFlags.filter((_, i) => i > index);
+      setAllFlags(updatedAllFlags);
+
+      const updatedDisplayedFlags = updatedAllFlags.slice(0, 3);
+      setDisplayedFlags(updatedDisplayedFlags);
+      setFlagCount(updatedAllFlags.length);
     }
   };
 
@@ -106,11 +130,12 @@ function App() {
               <Box mt={2}>
                 <Typography variant="h6" color="white">Flags</Typography>
                 <List>
-                  {flags.map((flag, index) => (
+                  {displayedFlags.map((flag, index) => (
                     <ListItemComponent
                       key={index}
                       itemNumber={flag.label}
                       paddedNumber={flag.timestamp}
+                      onClick={() => handleFlagClick(index)}
                     />
                   ))}
                 </List>
