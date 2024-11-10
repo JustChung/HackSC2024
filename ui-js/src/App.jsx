@@ -1,9 +1,10 @@
 import './App.css';
 import { useState, useRef, useEffect } from 'react';
-import { List, TextField, Box, Container, Typography, Button } from '@mui/material';
-import ListItemComponent from './ListItemComponent';
+import { TextField, Box, Container, Typography, Button} from '@mui/material';
 import RecordRTC from 'recordrtc';
 import { ListComponent } from './components/ListComponent/ListComponent';
+import Chip from '@mui/material/Chip';
+import FlagIcon from '@mui/icons-material/Flag';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -69,17 +70,17 @@ function App() {
     }
   };
 
-  const listItems = Array.from({ length: 6 }, (_, i) => {
-    const itemNumber = i + 1;
-    const paddedNumber = String(50 + i * 10).padStart(3, '0');
-    return (
-      <ListItemComponent 
-        key={i} 
-        itemNumber={`${itemNumber}`} 
-        paddedNumber={paddedNumber} 
-      />
-    );
-  });
+  // const listItems = Array.from({ length: 6 }, (_, i) => {
+  //   const itemNumber = i + 1;
+  //   const paddedNumber = String(50 + i * 10).padStart(3, '0');
+  //   return (
+  //     <ListItemComponent 
+  //       key={i} 
+  //       itemNumber={`${itemNumber}`} 
+  //       paddedNumber={paddedNumber} 
+  //     />
+  //   );
+  // });
 
   const startStream = async () => {
     try {
@@ -163,12 +164,8 @@ const stopStream = async () => {
 };
 
   return (
-    <div className="App">
-      <button onClick={isRecording ? stopStream : startStream}>
-        {isRecording ? "Stop Stream" : "Start Stream"}
-      </button>
+    <>
       {/* <video ref={videoRef} width={400} height={300} autoPlay muted></video> */}
-      <Container maxWidth="lg">
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} spacing={2}>
           <Box flex={1} mr={{ md: 2 }}>
             <div className="video-container">
@@ -185,8 +182,8 @@ const stopStream = async () => {
                 onClick={handleAddElapsedTime} 
                 sx={{
                   position: 'absolute', 
-                  top: '10px', 
-                  right: '10px',
+                  top: '1rem', 
+                  right: '1rem',
                   backgroundColor: 'rgba(211, 211, 211, 0.7)',
                   border: '2px solid black',
                   color: 'black',
@@ -199,44 +196,26 @@ const stopStream = async () => {
               </Button>
             </div>
           </Box>
-          <Box flex={1}>
             <div className="playback-container">
-              <Box sx={{ pt: 4 }}>
-                <TextField
-                  variant="outlined"
-                  placeholder="Search for tags..."
-                  value={searchTerm}
-                  onChange={handleInputChange}
-                  sx={{
-                    width: '80%',
-                    '& .MuiOutlinedInput-root': {
-                      height: '40px',
-                      '& fieldset': { borderColor: 'white' },
-                      '&.Mui-focused fieldset': { borderColor: 'white' },
-                    },
-                    '& input': {
-                      padding: '0 14px',
-                    },
-                  }}
-                />
-              </Box>
-              <List>
-                {listItems}
-              </List>
-              <Box >
-                <Typography variant="h6" color="white">Flags</Typography>
-                <List>
-                    <ListComponent
-                      flags={displayedFlags}
-                      onClick={handleFlagClick}
+                  <TextField id="standard-basic" 
+                    label="Flags" 
+                    variant="standard" 
+                    placeholder="Search for flags..."
+                    value={searchTerm}
+                    onChange={handleInputChange}
                     />
-                </List>
-              </Box>
+                  <ListComponent
+                    flags={displayedFlags}
+                    onClick={handleFlagClick}
+                  />
+                  <div className='option-bar'>
+                    <Chip label={isRecording ? "Finish" : "Stream"} onClick={isRecording ? stopStream : startStream} />
+                    <Chip label="Download" onClick={()=>console.log("test")} />
+                    <Chip label="Live" onClick={()=>console.log("test")} />
+                  </div>
             </div>
-          </Box>
         </Box>
-      </Container>
-    </div>
+    </>
   );
 }
 
