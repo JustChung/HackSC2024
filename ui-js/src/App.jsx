@@ -194,6 +194,10 @@ function App() {
     }
   };
 
+  function checkString(flag) {
+    return flag.label.toLowerCase().search(searchTerm) != -1;
+  }
+
   return (
     <>
       <Box display="flex" justifyContent="right" mt={2} mb={2}>
@@ -234,7 +238,7 @@ function App() {
             onChange={handleInputChange}
           />
           <ListComponent
-            flags={displayedFlags}
+            flags={displayedFlags.filter(checkString)}
             onClick={handleFlagClick}
             onDelete={handleDeleteFlag}
             onEdit={handleEditFlag}
