@@ -98,6 +98,7 @@ function VideoPlayer() {
             </button>
             <video ref={videoRef} width={400} height={300} autoPlay muted></video>
             <video 
+                className="video-player"
                 ref={playbackRef} 
                 width={400} 
                 height={300} 

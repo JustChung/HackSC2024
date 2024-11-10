@@ -5,6 +5,11 @@
   text-align: center;
 }
 
+body {
+  background-color: black;
+  color: white;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -39,4 +44,35 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.container {
+  position: absolute;
+  top: 115px;
+  bottom: 115px;
+  left: 0px;
+}
+
+.video-container {
+  position: absolute;
+  top: 110px;
+  bottom: 0px;
+  left: 50px;
+  margin: 0
+}
+
+.video-player {
+  border-radius: 15px;
+  width: 960px;
+  height: 540px;
+}
+
+.playback-container {
+  border-radius: 15px;
+  position: absolute;
+  left: 1060px;
+  top: 115px;
+  width: 345px;
+  height: 530px;
+  background-color: #888;
 }
