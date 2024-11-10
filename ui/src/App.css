@@ -50,9 +50,9 @@
 
 .video-container {
   position: absolute;
-  top: 0px;
+  top: 110px;
   bottom: 0px;
-  left: 70px;
+  left: 50px;
   margin: 0
 }
 
@@ -66,8 +66,8 @@
   border-radius: 15px;
   position: absolute;
   left: 1060px;
-  top: 5px;
+  top: 115px;
   width: 345px;
-  height: 535px;
+  height: 530px;
   background-color: #888;
 }
