@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import './VideoPlayer.css';
 import RecordRTC from 'recordrtc';
 
@@ -7,8 +7,9 @@ function VideoPlayer() {
     const playbackRef = useRef();
     const [isRecording, setIsRecording] = useState(false);
     const [recordRTC, setRecordRTC] = useState(null);
-    let multiblob = []
-    // let fullBlob
+    const mediaSource = useRef(new MediaSource()); 
+    const sourceBuffer = useRef(null); 
+    const multiblob = useRef([]); 
 
     const startStream = async () => {
         try {
@@ -20,13 +21,13 @@ function VideoPlayer() {
 
             const recorder = new RecordRTC(stream, {
                 type: 'video',
-                mimeType: 'video/webm',
-                timeSlice: 5000,
-                ondataavailable: (blob) => {
-                    storeSegment(blob);
-                    updatePlayback();
-                },
+                mimeType: 'video/webm; codecs="vp8, opus"',
+                timeSlice: 1000,
+                ondataavailable: handleDataAvailable,
             });
+
+            playbackRef.current.src = URL.createObjectURL(mediaSource.current);
+            mediaSource.current.addEventListener("sourceopen", handleSourceOpen);
 
             recorder.startRecording();
             setIsRecording(true);
@@ -36,18 +37,40 @@ function VideoPlayer() {
         }
     };
 
-    const storeSegment = (blob) => {
-        multiblob.push(blob)
-        // fullBlob = new Blob(multiblob, { type: 'video/webm' }); 
+    const handleSourceOpen = () => {
+        try {
+            sourceBuffer.current = mediaSource.current.addSourceBuffer('video/webm; codecs="vp8, opus"');
+            sourceBuffer.current.mode = "sequence"; 
+
+            multiblob.current.forEach(blob => appendToBuffer(blob));
+            multiblob.current = [];
+        } catch (error) {
+            console.error("Error creating SourceBuffer:", error);
+        }
     };
 
-    const updatePlayback = () => {
-        const fullBlob = new Blob(multiblob, { type: 'video/webm' }); 
-        const currentPlaybackTime = playbackRef.current.currentTime;
-        playbackRef.current.src = URL.createObjectURL(fullBlob);
-        playbackRef.current.onloadedmetadata = () => {
-            playbackRef.current.currentTime = Math.max(0, currentPlaybackTime);
-        };
+    const handleDataAvailable = (blob) => {
+        if (sourceBuffer.current && !sourceBuffer.current.updating) {
+            appendToBuffer(blob);
+        } else {
+            multiblob.current.push(blob); 
+        }
+    };
+
+    const appendToBuffer = (blob) => {
+        if (sourceBuffer.current && !sourceBuffer.current.updating) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                try {
+                    sourceBuffer.current.appendBuffer(new Uint8Array(reader.result));
+                } catch (error) {
+                    console.error("Error appending buffer:", error);
+                }
+            };
+            reader.readAsArrayBuffer(blob);
+        } else {
+            multiblob.current.push(blob);
+        }
     };
 
     const stopStream = async () => {
@@ -61,6 +84,10 @@ function VideoPlayer() {
                 }
                 setRecordRTC(null);
             });
+
+            if (mediaSource.current.readyState === "open") {
+                mediaSource.current.endOfStream();
+            }
         }
     };
 
