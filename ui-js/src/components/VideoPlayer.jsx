@@ -8,7 +8,7 @@ function VideoPlayer() {
     const [isRecording, setIsRecording] = useState(false);
     const [recordRTC, setRecordRTC] = useState(null);
     let multiblob = []
-    fullBlob;
+    // let fullBlob
 
     const startStream = async () => {
         try {
@@ -38,10 +38,11 @@ function VideoPlayer() {
 
     const storeSegment = (blob) => {
         multiblob.push(blob)
-        fullBlob = new Blob(multiblob, { type: 'video/webm' }); 
+        // fullBlob = new Blob(multiblob, { type: 'video/webm' }); 
     };
 
     const updatePlayback = () => {
+        const fullBlob = new Blob(multiblob, { type: 'video/webm' }); 
         const currentPlaybackTime = playbackRef.current.currentTime;
         playbackRef.current.src = URL.createObjectURL(fullBlob);
         playbackRef.current.onloadedmetadata = () => {
