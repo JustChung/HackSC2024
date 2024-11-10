@@ -81,27 +81,39 @@ function App() {
     );
   });
 
-  const startStream = async () => {
+  const [stream, setStream] = useState(null); // Add this at the top of your component
+
+const startStream = async () => {
     try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
+        const newStream = await navigator.mediaDevices.getDisplayMedia({
             video: true,
             audio: true,
         });
-        // videoRef.current.srcObject = stream;
 
-        const recorder = new RecordRTC(stream, {
+        // Reinitialize mediaSource, sourceBuffer, and multiblob
+        mediaSource.current = new MediaSource();
+        sourceBuffer.current = null;
+        multiblob.current = [];
+
+        const recorder = new RecordRTC(newStream, {
             type: 'video',
             mimeType: 'video/webm; codecs="vp8, opus"',
             timeSlice: 1000,
             ondataavailable: handleDataAvailable,
         });
 
+        // Update the video player's source to the new live stream
         playbackRef.current.src = URL.createObjectURL(mediaSource.current);
+        playbackRef.current.play();
+
         mediaSource.current.addEventListener("sourceopen", handleSourceOpen);
 
         recorder.startRecording();
         setIsRecording(true);
         setRecordRTC(recorder);
+
+        // Store the new stream so we can stop it later
+        setStream(newStream);
     } catch (error) {
         console.error("Error starting the stream:", error);
     }
@@ -145,22 +157,23 @@ const appendToBuffer = (blob) => {
 };
 
 const stopStream = async () => {
-    if (recordRTC) {
-        await recordRTC.stopRecording(() => {
-            setIsRecording(false);
+  if (recordRTC) {
+      await recordRTC.stopRecording(() => {
+          setIsRecording(false);
 
-            // const stream = videoRef.current.srcObject;
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
-            setRecordRTC(null);
-        });
+          if (stream) {
+              stream.getTracks().forEach(track => track.stop());
+          }
+          setRecordRTC(null);
+          setStream(null);
+      });
 
-        if (mediaSource.current.readyState === "open") {
-            mediaSource.current.endOfStream();
-        }
-    }
+      if (mediaSource.current.readyState === "open") {
+          mediaSource.current.endOfStream();
+      }
+  }
 };
+
 
   return (
     <div className="App">
