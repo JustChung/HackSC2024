@@ -40,3 +40,34 @@
 .read-the-docs {
   color: #888;
 }
+
+.container {
+  position: absolute;
+  top: 115px;
+  bottom: 115px;
+  left: 0px;
+}
+
+.video-container {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 70px;
+  margin: 0
+}
+
+.video-player {
+  border-radius: 15px;
+  width: 960px;
+  height: 540px;
+}
+
+.playback-container {
+  border-radius: 15px;
+  position: absolute;
+  left: 1060px;
+  top: 5px;
+  width: 345px;
+  height: 535px;
+  background-color: #888;
+}
