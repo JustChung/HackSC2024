@@ -9,7 +9,7 @@ function VideoPlayer() {
     const [recordRTC, setRecordRTC] = useState(null);
     const mediaSource = useRef(new MediaSource()); 
     const sourceBuffer = useRef(null); 
-    const multiblob = useRef([]); 
+    const multiblob = useRef([]);
 
     const startStream = async () => {
         try {

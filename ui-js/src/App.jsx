@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { List, TextField, Box, Container, Typography, Button } from '@mui/material';
 import ListItemComponent from './ListItemComponent';
 import RecordRTC from 'recordrtc';
+import { ListComponent } from './components/ListComponent/ListComponent';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,7 +19,6 @@ function App() {
   const mediaSource = useRef(new MediaSource()); 
   const sourceBuffer = useRef(null); 
   const multiblob = useRef([]); 
-
 
   useEffect(() => {
     if (allFlags.length === 0) {
@@ -223,17 +223,13 @@ const stopStream = async () => {
               <List>
                 {listItems}
               </List>
-              <Box mt={2}>
+              <Box >
                 <Typography variant="h6" color="white">Flags</Typography>
                 <List>
-                  {displayedFlags.map((flag, index) => (
-                    <ListItemComponent
-                      key={index}
-                      itemNumber={flag.label}
-                      paddedNumber={flag.timestamp}
-                      onClick={() => handleFlagClick(index)}
+                    <ListComponent
+                      flags={displayedFlags}
+                      onClick={handleFlagClick}
                     />
-                  ))}
                 </List>
               </Box>
             </div>
