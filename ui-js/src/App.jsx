@@ -184,15 +184,15 @@ const stopStream = async () => {
                   position: 'absolute', 
                   top: '1rem', 
                   right: '1rem',
-                  backgroundColor: 'rgba(211, 211, 211, 0.7)',
-                  border: '2px solid black',
-                  color: 'black',
-                  '&:hover': {
-                    backgroundColor: 'rgba(211, 211, 211, 0.9)',
-                  },
+                  // backgroundColor: 'rgba(211, 211, 211, 0.7)',
+                  // border: '2px solid black',
+                  // color: 'black',
+                  // '&:hover': {
+                  //   backgroundColor: 'rgba(211, 211, 211, 0.9)',
+                  // },
                 }}
               >
-                Flag
+                <FlagIcon color="primary"/>
               </Button>
             </div>
           </Box>
